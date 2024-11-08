@@ -1,20 +1,21 @@
-library(ggplot2)
-library(Seurat)
+
 ScSpatialFeaturePlot = function(spat, features,slot="counts",facet_labeller=NULL,
-                                logs=F,pt.size.factor=1.6, cells=Cells(spat),LegLabel="Count", 
+                                logs=F,pt.size.factor=1.6, cells=Cells(spat),LegLabel="Count",
                                 uq=.999, lq=0, flip=1, ncol=NULL, nrow=NULL, combine=T){
+  library(ggplot2)
+  library(Seurat)
   if(!combine){
     plotlist=list()
     for(one.feature in features){
       plotlist[[one.feature]]= ScSpatialFeaturePlot(spat, one.feature,slot,facet_labeller,
-                                                    logs,pt.size.factor, cells,LegLabel, 
+                                                    logs,pt.size.factor, cells,LegLabel,
                                                     uq, lq, flip, ncol=1, nrow=1, combine=T)+theme(legend.position="top")
     }
     return(plotlist)
   }
   fnames=features
   MinMaxq = function(X,uq=.99, lq=0.05){MinMax(X, min=quantile(X,lq, na.rm=T), max=quantile(X,uq, na.rm=T))}
-  rawcoords=GetTissueCoordinates(spat)[cells,]
+  rawcoords=Seurat::GetTissueCoordinates(spat)[cells,]
   if(flip==1){
     rawcoords$x = -rawcoords$imagecol
     rawcoords$y = rawcoords$imagerow
@@ -31,12 +32,12 @@ ScSpatialFeaturePlot = function(spat, features,slot="counts",facet_labeller=NULL
     if(fname %in% colnames(spat@meta.data)){
       spat$intfeat[cells] = MinMaxq(spat[[fname]][cells,1], uq=uq, lq=lq)
                              }else{
-        feat = FetchData(spat, slot=slot, vars=fname)[cells,1]
+        feat = Seurat::FetchData(spat, slot=slot, vars=fname)[cells,1]
         mmfeat=MinMaxq(feat, uq=uq, lq=lq)
         names(mmfeat)=cells
         spat$intfeat=mmfeat
       }
-    plotdf= data.frame(x=rawcoords$x, 
+    plotdf= data.frame(x=rawcoords$x,
                        y= rawcoords$y,
                        feature=spat$intfeat[rownames(rawcoords)],
                        fname = rep(fname, nrow(rawcoords)))
@@ -54,7 +55,7 @@ ScSpatialFeaturePlot = function(spat, features,slot="counts",facet_labeller=NULL
     #scale_color_manual(values=plotdf$scfred)+
     scale_color_viridis_c(option="turbo")+
     theme_bw()+
-    
+
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
           axis.text.x=element_blank(),
           axis.ticks.x=element_blank(),
