@@ -1,0 +1,17 @@
+Package: ScSpatialFeaturePlot
+Type: Package
+Title: Improve Seurat Spatial Plotting Features
+Version: 0.1.0
+Author: MaryLena Bleile
+Maintainer: Marylena Bleile <marylenableile@gmail.com>
+Description: Contains a single function, ScSpatialFeaturePlot, which extends
+    the Seurat function SpatialFeaturePlot for spatial transcriptomics data.
+License: LGPL-2.1
+Encoding: UTF-8
+LazyData: true
+Depends: 
+    R (>= 3.1)
+Imports:
+    Seurat,
+    ggplot2
+  
