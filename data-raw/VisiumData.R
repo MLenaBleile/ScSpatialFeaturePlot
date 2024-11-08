@@ -1,4 +1,4 @@
 library(Seurat)
 
-VisiumData <- readRDS("data-raw/VisiumData.rds")
+VisiumData <- readRDS("VisiumData.rds")
 devtools::use_data(VisiumData, overwrite = TRUE)
