@@ -1,4 +1,5 @@
-get_VisiumData=function(
-    #library(Seurat)
+GetVisiumData=function(){
+    library(Seurat)
     load("inst/extdata/VisiumData.rda")
-    )
+    return(spat)
+}
