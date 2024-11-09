@@ -1,7 +1,7 @@
 
 ScSpatialFeaturePlot = function(spat, features,slot="counts",facet_labeller=NULL,
                                 logs=F,pt.size.factor=1.6, cells=Cells(spat),LegLabel="Count",
-                                uq=.999, lq=0, flip=1, ncol=NULL, nrow=NULL, combine=T){
+                                uq=.999, lq=0, flip=3, ncol=NULL, nrow=NULL, combine=T){
   library(ggplot2)
   library(Seurat)
   if(!combine){
