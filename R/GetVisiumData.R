@@ -1,4 +1,4 @@
 get_VisiumData=function(
-    library(Seurat)
+    #library(Seurat)
     load("inst/extdata/VisiumData.rda")
     )
