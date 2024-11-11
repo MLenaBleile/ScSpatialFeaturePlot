@@ -14,7 +14,7 @@ library(rmarkdown)
 This Vignette shows basic usage of the ScSpatialFeaturePlot function.
 
 ## Install packages 
-ScSpatialFeaturePlot is available as an R package on Github. For illustrative example, we use a slice of PD1-refractory melanoma processed by 10X Visium. The data can be downloaded here: https://github.com/MLenaBleile/ScSpatialFeaturePlot/blob/master/inst/extdata/VisiumData.rda. (Note that it must be downloaded manually, calling download.file in R will corrupt the file). 
+ScSpatialFeaturePlot is available as an R package on Github. For illustrative example, we use a slice of PD1-refractory melanoma processed by 10X Visium. 
 
 ```{r install}
 devtools::install_github("MLenaBleile/ScSpatialFeaturePlot")
