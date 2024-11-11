@@ -1,0 +1,97 @@
+---
+title: "Plotting With ScSpatialFeaturePlot"
+author: "MaryLena Bleile"
+date: "2024-11-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rmarkdown)
+```
+
+# Spatial Feature Plots with ScSpatialFeaturePlot
+This Vignette shows basic usage of the ScSpatialFeaturePlot function.
+
+## Install packages 
+ScSpatialFeaturePlot is available as an R package on Github. For illustrative example, we use a slice of PD1-refractory melanoma processed by 10X Visium. The data can be downloaded here: https://github.com/MLenaBleile/ScSpatialFeaturePlot/blob/master/inst/extdata/VisiumData.rda. (Note that it must be downloaded manually, calling download.file in R will corrupt the file). 
+
+```{r install}
+devtools::install_github("MLenaBleile/ScSpatialFeaturePlot")
+library(Seurat)
+library(ScSpatialFeaturePlot)
+load("/ebfs/epibio/bleilem/PipelineMS/VisiumData.rda")
+
+```
+
+## Basic Plotting Capability
+
+
+The ScSpatialFeaturePlot function contains many of the same elements as SpatialFeaturePlot in Seurat, and can generally be called the same way. One difference between ScSpatialFeaturePlot and SpatialFeaturePlot is that the default slot is "counts" instead of "data".
+
+```{r basic}
+ScSpatialFeaturePlot(spat, features="MLANA", pt.size.factor=2)
+
+```
+
+Many of the same options can be changed the same way as in SpatialFeaturePlot, like pt.size.factor and slot. You can give the legend a different title with the argument "LegLabel".
+
+```{r features}
+ScSpatialFeaturePlot(spat, features="MLANA",
+                     slot="scale.data",pt.size.factor=2.8, 
+                     LegLabel="Scaled\nData")
+
+```
+
+
+
+## Multiple Genes
+
+One of the main attractions of ScSpatialFeaturePlot is that you can plot several genes on the same scale, thereby allowing comparison of expression magnitude between genes. ScSpatialFeaturePlot returns a generic ggplot object, which can easily be modified by adding additional gg elements.
+
+```{r compare}
+ScSpatialFeaturePlot(spat, features=c("MLANA","MITF"),
+                     pt.size.factor=2)+ggtitle("ScSpatialFeaturePlot")
+
+SpatialFeaturePlot(spat, features=c("MLANA","SOX10"), pt.size.factor=2.8, slot="counts")+ggtitle("SpatialFeaturePlot")
+
+
+```
+
+
+If you want to plot genes on different scales, just set combine = F. This will return a list of ggplots which can be arranged with grid.arrange. I chose not to put the grid.arrange inside the function because it is sometimes useful to manipulate, replace, or add specific gg plots in the list before calling.
+
+```{r multi}
+myplots=ScSpatialFeaturePlot(spat, features=c("MLANA","MITF","SOX10","PTPRC"),
+                      combine=F)
+
+do.call(gridExtra::grid.arrange, c(myplots, ncol=2))
+
+
+```
+
+You can also plot specific cells using the cells argument, and truncate outliers by quantile using lq and uq for upper and lower quantiles. Since ScSpatialFeaturePlot does not use the image, it creates the plots faster than SpatialFeaturePlot if you need to subset the data.
+
+```{r subset}
+ScSpatialFeaturePlot(spat, features=c("VIM"),
+                     pt.size.factor=2, cells=WhichCells(spat, expression=PTPRC==0, slot="counts"), lq=.25, uq=.95)
+
+
+```
+
+
+ScSpatialFeaturePlot also allows the user to rotate the image by manipulating the flip argument. This functionality is not included in SpatialFeaturePlot.
+
+```{r flip}
+ScSpatialFeaturePlot(spat, features=c("VIM"),pt.size.factor=2,
+                     flip=1, cells=WhichCells(spat, expression=PTPRC==0, slot="counts"), lq=.25, uq=.95)
+
+ScSpatialFeaturePlot(spat, features=c("VIM"),
+                     flip=2,pt.size.factor=2, cells=WhichCells(spat, expression=PTPRC==0, slot="counts"), lq=.25, uq=.95)
+
+
+```
+
+
+
+Thanks for reading! If you use ScSpatialFeaturePlot, please cite "Bleile, et al. *Navigating the Cell State Complexity in Spatial Transcriptomics Deconvolution* (2024)". Any questions or bug reports can be reported to the corresponding author at marylenableile@gmail.com.
