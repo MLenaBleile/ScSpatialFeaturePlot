@@ -20,7 +20,7 @@ ScSpatialFeaturePlot is available as an R package on Github. For illustrative ex
 devtools::install_github("MLenaBleile/ScSpatialFeaturePlot")
 library(Seurat)
 library(ScSpatialFeaturePlot)
-load("/ebfs/epibio/bleilem/PipelineMS/VisiumData.rda")
+load("VisiumData.rda")
 
 ```
 
