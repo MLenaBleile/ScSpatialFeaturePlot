@@ -47,6 +47,7 @@
 #' @importFrom ggplot2 ggplot geom_point aes scale_color_viridis_c theme_bw
 #'   theme element_blank labs facet_wrap
 #' @importFrom rlang .data
+#' @importFrom stats quantile
 #' @export
 ScSpatialFeaturePlot <- function(spat, features, slot = "counts",
                                   facet_labeller = NULL,
@@ -94,15 +95,30 @@ ScSpatialFeaturePlot <- function(spat, features, slot = "counts",
 
   # --- Get and transform tissue coordinates ---
   rawcoords <- Seurat::GetTissueCoordinates(spat)[cells, ]
-  if (flip == 1) {
-    rawcoords$x <- -rawcoords$imagecol
-    rawcoords$y <- rawcoords$imagerow
-  } else if (flip == 2) {
-    rawcoords$x <- rawcoords$imagerow
-    rawcoords$y <- rawcoords$imagecol
+
+  # Handle different coordinate column names across Seurat versions/image types
+  # Seurat v4 VisiumV1: imagerow, imagecol
+  # Seurat v5 SlideSeq/FOV: x, y
+  if ("imagecol" %in% colnames(rawcoords)) {
+    col_x <- rawcoords$imagecol
+    col_y <- rawcoords$imagerow
+  } else if ("x" %in% colnames(rawcoords)) {
+    col_x <- rawcoords$x
+    col_y <- rawcoords$y
   } else {
-    rawcoords$x <- rawcoords$imagecol
-    rawcoords$y <- -rawcoords$imagerow
+    stop("Unexpected coordinate column names from GetTissueCoordinates: ",
+         paste(colnames(rawcoords), collapse = ", "), call. = FALSE)
+  }
+
+  if (flip == 1) {
+    rawcoords$x <- -col_x
+    rawcoords$y <- col_y
+  } else if (flip == 2) {
+    rawcoords$x <- col_y
+    rawcoords$y <- col_x
+  } else {
+    rawcoords$x <- col_x
+    rawcoords$y <- -col_y
   }
 
   # --- Build plotting data frame (no mutation of input object) ---
