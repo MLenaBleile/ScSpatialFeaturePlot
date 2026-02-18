@@ -10,8 +10,16 @@ License: LGPL-2.1
 Encoding: UTF-8
 LazyData: true
 Depends: 
-    R (>= 3.1)
+    R (>= 3.5.0)
 Imports:
     Seurat,
-    ggplot2
-  
+    ggplot2,
+    rlang
+Suggests:
+    testthat (>= 3.0.0),
+    gridExtra,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+RoxygenNote: 7.3.1
