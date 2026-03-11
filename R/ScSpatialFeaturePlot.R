@@ -125,9 +125,11 @@ ScSpatialFeaturePlot <- function(spat, features, slot = "counts",
   meta_cols <- colnames(spat[[]])
   plot_dfs <- lapply(features, function(fname) {
     if (fname %in% meta_cols) {
-      feat_values <- spat[[fname]][cells, 1]
+      feat_df <- spat[[fname]][cells, , drop = FALSE]
+      feat_values <- setNames(feat_df[[1]], rownames(feat_df))
     } else {
-      feat_values <- Seurat::FetchData(spat, layer = slot, vars = fname)[cells, 1]
+      feat_df <- Seurat::FetchData(spat, layer = slot, vars = fname)[cells, , drop = FALSE]
+      feat_values <- setNames(feat_df[[1]], rownames(feat_df))
     }
     feat_clipped <- MinMaxq(feat_values, uq = uq, lq = lq)
 
